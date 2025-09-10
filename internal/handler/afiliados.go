@@ -1,4 +1,4 @@
-package afiliados
+package handler
 
 import (
 	"net/http"
@@ -18,7 +18,7 @@ type Afiliado struct {
 	Provincia string `json:"provincia"`
 }
 
-type AfiliadoHandler struct{
+type AfiliadoHandler struct {
 	logger *zap.Logger
 }
 
