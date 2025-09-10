@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type Afiliado struct {
@@ -17,13 +18,21 @@ type Afiliado struct {
 	Provincia string `json:"provincia"`
 }
 
-type AfiliadoHandler struct{}
+type AfiliadoHandler struct{
+	logger *zap.Logger
+}
 
-func NewAfiliadoHandler() *AfiliadoHandler {
-	return &AfiliadoHandler{}
+func NewAfiliadoHandler(logger *zap.Logger) *AfiliadoHandler {
+	return &AfiliadoHandler{
+		logger: logger,
+	}
 }
 
 func (h *AfiliadoHandler) GetAfiliados(c *gin.Context) {
+	h.logger.Info("Obteniendo lista de afiliados",
+		zap.String("endpoint", "/afiliados"),
+		zap.String("method", "GET"))
+
 	afiliados := []Afiliado{
 		{
 			ID:        1,
@@ -76,6 +85,10 @@ func (h *AfiliadoHandler) GetAfiliados(c *gin.Context) {
 			Provincia: "Tucuman",
 		},
 	}
+
+	h.logger.Info("Afiliados obtenidos exitosamente",
+		zap.Int("total_afiliados", len(afiliados)),
+		zap.String("status", "success"))
 
 	c.JSON(http.StatusOK, gin.H{
 		"data":    afiliados,
