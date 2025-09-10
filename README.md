@@ -10,12 +10,11 @@ Una API REST para gestionar prestadores de servicios construida con Go y Gin.
 ### Instalacion
 Clonar el repositorio e instalar dependencias:
 - git clone <repository-url>
-- cd prestadores-api
+- cd *yourFolderProject*
 - go mod tidy
 
 ### Ejecutar la Aplicacion
-Para ejecutar en modo desarrollo: go run cmd/main.go
-Para compilar y ejecutar: go build -o prestadores-api cmd/main.go && ./prestadores-api
+- Para ejecutar: go run cmd/main.go
 
 El servidor se iniciara en el puerto 8080.
 
@@ -31,6 +30,14 @@ El servidor se iniciara en el puerto 8080.
   - Obtiene la lista de afiliados
   - Respuesta: `{"data": [...], "count": 5, "message": "Afiliados obtenidos exitosamente"}`
 
+### Login
+- **POST** `/v1/login`
+    - Realiza el inicio de sesión validando el CUIT del usuario.
+    - Request body: `{"cuit": "20304050607"}`
+    - Respuesta exitosa: `{"message": "Login success", "cuit": "20304050607"}`
+    - Error por CUIT faltante: `{"error": "El campo 'cuit' es obligatorio"}`
+    - Error por request inválido: `{"error": "Formato de request inválido"}`
+
 ## Desarrollo
 
 ### Estructura del Proyecto
@@ -41,6 +48,7 @@ prestadores-api/
 ├── internal/
 │   └── handler/
 │       └── afiliados.go           # Handler para endpoints de afiliados
+│       └── login.go               # Handler para endpoints de login
 ├── go.mod                         # Dependencias del modulo Go
 └── README.md                      # Documentacion del proyecto
 ```
