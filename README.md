@@ -8,24 +8,14 @@ Una API REST para gestionar prestadores de servicios construida con Go y Gin.
 - Go 1.25+
 
 ### Instalacion
-```bash
-# Clonar el repositorio
-git clone <repository-url>
-cd prestadores-api
-
-# Instalar dependencias
-go mod tidy
-```
+Clonar el repositorio e instalar dependencias:
+- git clone <repository-url>
+- cd prestadores-api
+- go mod tidy
 
 ### Ejecutar la Aplicacion
-```bash
-# Ejecutar en modo desarrollo
-go run main.go
-
-# Compilar y ejecutar
-go build -o prestadores-api
-./prestadores-api
-```
+Para ejecutar en modo desarrollo: go run cmd/main.go
+Para compilar y ejecutar: go build -o prestadores-api cmd/main.go && ./prestadores-api
 
 El servidor se iniciara en el puerto 8080.
 
@@ -36,14 +26,23 @@ El servidor se iniciara en el puerto 8080.
   - Devuelve una respuesta simple de pong (es un healthcheck)
   - Respuesta: `{"message": "pong"}`
 
+### Afiliados
+- **GET** `/v1/prestadores/afiliados`
+  - Obtiene la lista de afiliados
+  - Respuesta: `{"data": [...], "count": 5, "message": "Afiliados obtenidos exitosamente"}`
+
 ## Desarrollo
 
 ### Estructura del Proyecto
 ```
 prestadores-api/
-├── main.go          # Punto de entrada de la aplicacion
-├── go.mod           # Dependencias del modulo Go
-└── README.md        # Documentacion del proyecto
+├── cmd/
+│   └── main.go                    # Punto de entrada de la aplicacion
+├── internal/
+│   └── handler/
+│       └── afiliados.go           # Handler para endpoints de afiliados
+├── go.mod                         # Dependencias del modulo Go
+└── README.md                      # Documentacion del proyecto
 ```
 
 ### Agregar Nuevos Endpoints
