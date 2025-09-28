@@ -19,17 +19,27 @@ type AfiliadoListItem struct {
 
 // Detalle de afiliado
 type AfiliadoDetalle struct {
-	ID          int    `json:"id"`
-	NroAfiliado string `json:"nroAfiliado"`
-	DNI         string `json:"dni"`
-	Nombre      string `json:"nombre"`
-	Apellido    string `json:"apellido"`
-	PlanMedico  string `json:"planMedico"`
-	Titular     bool   `json:"titular"`
-	Email       string `json:"email"`
-	Telefono    string `json:"telefono"`
-	Ciudad      string `json:"ciudad"`
-	Provincia   string `json:"provincia"`
+	ID            int               `json:"id"`
+	NroAfiliado   string            `json:"nroAfiliado"`
+	DNI           string            `json:"dni"`
+	Nombre        string            `json:"nombre"`
+	Apellido      string            `json:"apellido"`
+	PlanMedico    string            `json:"planMedico"`
+	Titular       bool              `json:"titular"`
+	Email         string            `json:"email"`
+	Telefono      string            `json:"telefono"`
+	Ciudad        string            `json:"ciudad"`
+	Provincia     string            `json:"provincia"`
+	GrupoFamiliar []IntegranteGrupo `json:"grupoFamiliar"`
+}
+
+// Integrante del grupo familiar (detalle)
+type IntegranteGrupo struct {
+	ID         int    `json:"id"`
+	DNI        string `json:"dni"`
+	Nombre     string `json:"nombre"`
+	Apellido   string `json:"apellido"`
+	PlanMedico string `json:"planMedico"`
 }
 
 type AfiliadoHandler struct {
@@ -63,6 +73,10 @@ func detalleMockByID(id int) (AfiliadoDetalle, bool) {
 			Telefono:    "011-4567-8901",
 			Ciudad:      "Buenos Aires",
 			Provincia:   "Buenos Aires",
+			GrupoFamiliar: []IntegranteGrupo{
+				{ID: 1, DNI: "43521489", Nombre: "María", Apellido: "Candia", PlanMedico: "Sancor Salud"},
+				{ID: 2, DNI: "53521489", Nombre: "Stella", Apellido: "Candia", PlanMedico: "Sancor Salud"},
+			},
 		}, true
 	case 2:
 		return AfiliadoDetalle{
@@ -72,11 +86,15 @@ func detalleMockByID(id int) (AfiliadoDetalle, bool) {
 			Nombre:      "Stella",
 			Apellido:    "Candia",
 			PlanMedico:  "Sancor Salud",
-			Titular:     false,
+			Titular:     true,
 			Email:       "maria.rodriguez@email.com",
 			Telefono:    "0341-234-5678",
 			Ciudad:      "Rosario",
 			Provincia:   "Santa Fe",
+			GrupoFamiliar: []IntegranteGrupo{
+				{ID: 1, DNI: "43521489", Nombre: "María", Apellido: "Candia", PlanMedico: "Sancor Salud"},
+				{ID: 2, DNI: "53521489", Nombre: "Matias", Apellido: "Candia", PlanMedico: "Sancor Salud"},
+			},
 		}, true
 	default:
 		return AfiliadoDetalle{}, false
