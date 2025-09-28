@@ -12,7 +12,7 @@ type LoginHandler struct {
 }
 
 type LoginInfo struct {
-	Cuit string `json:"cuit" binding:"required"`
+	Username string `json:"username" binding:"required"`
 }
 
 func NewLoginHandler(logger *zap.Logger) *LoginHandler {
@@ -34,15 +34,15 @@ func (h *LoginHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// cuit no puede ser vacío
-	if loginInfo.Cuit == "" {
-		h.logger.Warn("Cuit vacío en login")
-		c.JSON(http.StatusBadRequest, gin.H{"error": "El campo 'cuit' es obligatorio"})
+	// username no puede ser vacío
+	if loginInfo.Username == "" {
+		h.logger.Warn("username vacío en login")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "El campo 'username' es obligatorio"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Login success",
-		"cuit":    loginInfo.Cuit,
+		"message":  "Login success",
+		"username": loginInfo.Username,
 	})
 }

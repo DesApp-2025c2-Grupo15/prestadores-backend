@@ -1,8 +1,12 @@
 package main
 
 import (
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+
 	"prestadores-api/internal/handler"
 )
 
@@ -10,11 +14,17 @@ func main() {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
-	logger.Info("Iniciando servidor prestadores-api",
-		zap.String("port", "8080"),
-		zap.String("version", "1.0.0"))
-
 	r := gin.Default()
+
+	// CORS: debe ir antes de las rutas
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"}, // Vite
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: false, // si no usás cookies, podés dejarlo en false
+		MaxAge:           12 * time.Hour,
+	}))
 
 	loginHandler := handler.NewLoginHandler(logger)
 	afiliadosHandler := handler.NewAfiliadoHandler(logger)
@@ -30,6 +40,5 @@ func main() {
 		v1.POST("/login", loginHandler.Login)
 	}
 
-	logger.Info("Servidor iniciado exitosamente")
 	r.Run(":8080")
 }

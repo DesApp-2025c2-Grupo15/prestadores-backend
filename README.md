@@ -31,7 +31,7 @@ El servidor se iniciara en el puerto 8080.
   - Respuesta: `{"data": [...], "count": 5, "message": "Afiliados obtenidos exitosamente"}`
 
 ### Login
-- **POST** `/v1/login`
+- **POST** `/v1/prestadores/login`
     - Realiza el inicio de sesión validando el CUIT del usuario.
     - Request body: `{"cuit": "20304050607"}`
     - Respuesta exitosa: `{"message": "Login success", "cuit": "20304050607"}`
