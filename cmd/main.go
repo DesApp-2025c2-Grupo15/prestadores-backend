@@ -16,9 +16,11 @@ func main() {
 
 	r := gin.Default()
 
+	// Handlers
 	loginHandler := handler.NewLoginHandler(logger)
 	afiliadosHandler := handler.NewAfiliadoHandler(logger)
 
+	// Rutas
 	v1 := r.Group("/v1/prestadores")
 	{
 		v1.GET("/ping", func(c *gin.Context) {
@@ -26,7 +28,12 @@ func main() {
 				"message": "pong",
 			})
 		})
+
+		// Afiliados
 		v1.GET("/afiliados", afiliadosHandler.GetAfiliados)
+		v1.GET("/afiliados/:id", afiliadosHandler.GetAfiliadoDetalle)
+
+		// Login
 		v1.POST("/login", loginHandler.Login)
 	}
 
