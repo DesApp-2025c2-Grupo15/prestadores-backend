@@ -1,11 +1,11 @@
 package main
 
 import (
-  "time"
-	"prestadores-api/internal/handler"
 	"prestadores-api/internal/handler/afiliados"
+	"prestadores-api/internal/handler/login"
+	"time"
 
-  "github.com/gin-contrib/cors"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -27,7 +27,7 @@ func main() {
 	}))
 
 	// Handlers
-	loginHandler := handler.NewLoginHandler(logger)
+	loginHandler := login.NewLoginHandler(logger)
 	afiliadosHandler := afiliados.NewAfiliadoHandler(logger)
 	historiaHandler := afiliados.NewHistoriaClinicaHandler(logger)
 
@@ -49,7 +49,6 @@ func main() {
 		v1.POST("/login", loginHandler.Login)
 	}
 
-  
 	logger.Info("Servidor iniciado exitosamente")
 	r.Run(":8080")
 }
