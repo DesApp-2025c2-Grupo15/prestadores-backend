@@ -97,6 +97,7 @@ Respuestas:
 Error por CUIT faltante: {"error": "El campo 'cuit' es obligatorio"}
 Error por request inválido: {"error": "Formato de request inválido"}
 
+  
 ## Desarrollo
 
 ### Estructura del proyecto
