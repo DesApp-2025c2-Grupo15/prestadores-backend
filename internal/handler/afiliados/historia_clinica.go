@@ -46,11 +46,24 @@ func NewHistoriaClinicaHandler(logger *zap.Logger) *HistoriaClinicaHandler {
 	}
 }
 
-// GetHistoriaClinica GET /v1/prestadores/afiliados/:id/historia-clinica - Query opcional: ?prestadorId=45 → filtra notas de ese prestador
+// GetHistoriaClinica GET /v1/prestadores/afiliados/:id/historia-clinica
 func (h *HistoriaClinicaHandler) GetHistoriaClinica(c *gin.Context) {
 	h.logger.Info("Obteniendo historia clínica",
 		zap.String("endpoint", "/afiliados/:id/historia-clinica"),
 		zap.String("method", "GET"))
+
+	// --- Validar y convertir :id ---
+	idStr := c.Param("id")
+	afiliadoID, err := strconv.Atoi(idStr)
+	if err != nil || afiliadoID <= 0 {
+		h.logger.Warn("Parametro id inválido",
+			zap.String("id", idStr),
+			zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "El parámetro 'id' debe ser un entero positivo.",
+		})
+		return
+	}
 
 	turnos := []Turno{
 		{
@@ -91,7 +104,7 @@ func (h *HistoriaClinicaHandler) GetHistoriaClinica(c *gin.Context) {
 	}
 
 	historia := HistoriaClinica{
-		AfiliadoID: c.Param("id"), 
+		AfiliadoID: afiliadoID,
 		Page:       0,
 		Size:       20,
 		Total:      len(turnos),

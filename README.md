@@ -90,11 +90,11 @@ POST /v1/prestadores/login
 Realiza el inicio de sesión validando el CUIT del usuario.
 Body:
 { 
-    "cuit": "20304050607" 
+    "username": "20304050607" 
 }
 Respuestas:
-Éxito: {"message": "Login success", "cuit": "20304050607"}
-Error por CUIT faltante: {"error": "El campo 'cuit' es obligatorio"}
+Éxito: {"message": "Login success", "username": "20304050607"}
+Error por CUIT faltante: {"error": "El campo 'username' es obligatorio"}
 Error por request inválido: {"error": "Formato de request inválido"}
 
   
