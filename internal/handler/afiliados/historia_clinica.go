@@ -91,7 +91,7 @@ func (h *HistoriaClinicaHandler) GetHistoriaClinica(c *gin.Context) {
 	}
 
 	historia := HistoriaClinica{
-		AfiliadoID: 1, // mock, en real debería salir de c.Param("id")
+		AfiliadoID: c.Param("id"), 
 		Page:       0,
 		Size:       20,
 		Total:      len(turnos),
