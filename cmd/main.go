@@ -26,6 +26,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	// Handlers
 	loginHandler := handler.NewLoginHandler(logger)
 	afiliadosHandler := afiliados.NewAfiliadoHandler(logger)
 	historiaHandler := afiliados.NewHistoriaClinicaHandler(logger)
@@ -40,6 +41,7 @@ func main() {
 
 		// Afiliados
 		v1.GET("/afiliados", afiliadosHandler.GetAfiliados)
+		v1.GET("/afiliados/:id", afiliadosHandler.GetAfiliadoDetalle)
 		// Detalle de historia clínica (turnos + notas) del afiliado
 		v1.GET("/afiliados/:id/historia-clinica", historiaHandler.GetHistoriaClinica)
 
