@@ -1,4 +1,4 @@
-package handler
+package afiliados
 
 import (
 	"net/http"
