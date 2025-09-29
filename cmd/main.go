@@ -1,13 +1,13 @@
 package main
 
 import (
-	"time"
+  "time"
+	"prestadores-api/internal/handler"
+	"prestadores-api/internal/handler/afiliados"
 
-	"github.com/gin-contrib/cors"
+  "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-
-	"prestadores-api/internal/handler"
 )
 
 func main() {
@@ -27,18 +27,27 @@ func main() {
 	}))
 
 	loginHandler := handler.NewLoginHandler(logger)
-	afiliadosHandler := handler.NewAfiliadoHandler(logger)
+	afiliadosHandler := afiliados.NewAfiliadoHandler(logger)
+	historiaHandler := afiliados.NewHistoriaClinicaHandler(logger)
 
+	// Rutas /v1/prestadores
 	v1 := r.Group("/v1/prestadores")
 	{
+		// Healthcheck
 		v1.GET("/ping", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "pong",
-			})
+			c.JSON(200, gin.H{"message": "pong"})
 		})
+
+		// Afiliados
 		v1.GET("/afiliados", afiliadosHandler.GetAfiliados)
+		// Detalle de historia clínica (turnos + notas) del afiliado
+		v1.GET("/afiliados/:id/historia-clinica", historiaHandler.GetHistoriaClinica)
+
+		// Login
 		v1.POST("/login", loginHandler.Login)
 	}
 
+  
+	logger.Info("Servidor iniciado exitosamente")
 	r.Run(":8080")
 }
