@@ -5,6 +5,7 @@ import (
 	"prestadores-api/internal/handler/autorizaciones"
 	"prestadores-api/internal/handler/login"
 	"prestadores-api/internal/handler/recetas"
+	"prestadores-api/internal/handler/reintegros"
 	"prestadores-api/internal/repository"
 	"prestadores-api/internal/service"
 	"time"
@@ -38,12 +39,17 @@ func main() {
 	recetaRepo := repository.NewRecetaRepository()
 	recetaService := service.NewRecetaService(recetaRepo, logger)
 
+	// Repository y Service de Reintegros
+	reintegroRepo := repository.NewReintegroRepository()
+	reintegroService := service.NewReintegroService(reintegroRepo, logger)
+
 	// Handlers
 	loginHandler := login.NewLoginHandler(logger)
 	afiliadosHandler := afiliados.NewAfiliadoHandler(logger)
 	historiaHandler := afiliados.NewHistoriaClinicaHandler(logger)
 	autorizacionHandler := autorizaciones.NewAutorizacionHandler(autorizacionService, logger)
 	recetaHandler := recetas.NewRecetaHandler(recetaService, logger)
+	reintegroHandler := reintegros.NewReintegroHandler(reintegroService, logger)
 
 	// Rutas /v1/prestadores
 	v1 := r.Group("/v1/prestadores")
@@ -65,6 +71,7 @@ func main() {
 		// Solicitudes
 		solicitudes := v1.Group("/solicitudes")
 		{
+			// Autorizaciones
 			autorizacionesGroup := solicitudes.Group("/autorizaciones")
 			{
 				autorizacionesGroup.GET("", autorizacionHandler.GetAutorizaciones)
@@ -74,6 +81,7 @@ func main() {
 				autorizacionesGroup.PATCH("/:id/estado", autorizacionHandler.CambiarEstadoAutorizacion)
 			}
 
+			// Recetas
 			recetasGroup := solicitudes.Group("/recetas")
 			{
 				recetasGroup.GET("", recetaHandler.GetRecetas)
@@ -83,7 +91,15 @@ func main() {
 				recetasGroup.PATCH("/:id/estado", recetaHandler.CambiarEstadoReceta)
 			}
 
-			// TODO: Reintegros/Situaciones terapeuticas como sub grupo
+			// Reintegros
+			reintegrosGroup := solicitudes.Group("/reintegros")
+			{
+				reintegrosGroup.GET("", reintegroHandler.GetReintegros)
+				reintegrosGroup.GET("/:id", reintegroHandler.GetReintegroByID)
+				reintegrosGroup.POST("", reintegroHandler.CreateReintegro)
+				reintegrosGroup.PUT("/:id", reintegroHandler.UpdateReintegro)
+				reintegrosGroup.PATCH("/:id/estado", reintegroHandler.CambiarEstadoReintegro)
+			}
 		}
 	}
 
