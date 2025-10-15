@@ -2,7 +2,10 @@ package main
 
 import (
 	"prestadores-api/internal/handler/afiliados"
+	"prestadores-api/internal/handler/autorizaciones"
 	"prestadores-api/internal/handler/login"
+	"prestadores-api/internal/repository"
+	"prestadores-api/internal/service"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -26,10 +29,15 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	// Repository y Service de autorizaciones
+	autorizacionRepo := repository.NewAutorizacionRepository()
+	autorizacionService := service.NewAutorizacionService(autorizacionRepo, logger)
+
 	// Handlers
 	loginHandler := login.NewLoginHandler(logger)
 	afiliadosHandler := afiliados.NewAfiliadoHandler(logger)
 	historiaHandler := afiliados.NewHistoriaClinicaHandler(logger)
+	autorizacionHandler := autorizaciones.NewAutorizacionHandler(autorizacionService, logger)
 
 	// Rutas /v1/prestadores
 	v1 := r.Group("/v1/prestadores")
@@ -47,6 +55,21 @@ func main() {
 
 		// Login
 		v1.POST("/login", loginHandler.Login)
+
+		// Solicitudes
+		solicitudes := v1.Group("/solicitudes")
+		{
+			autorizacionesGroup := solicitudes.Group("/autorizaciones")
+			{
+				autorizacionesGroup.GET("", autorizacionHandler.GetAutorizaciones)
+				autorizacionesGroup.GET("/:id", autorizacionHandler.GetAutorizacionByID)
+				autorizacionesGroup.POST("", autorizacionHandler.CreateAutorizacion)
+				autorizacionesGroup.PATCH("/:id", autorizacionHandler.UpdateAutorizacion)
+				autorizacionesGroup.PATCH("/:id/estado", autorizacionHandler.CambiarEstadoAutorizacion)
+			}
+
+			// TODO: Recetas/Reintegros/Situaciones terapeuticas como sub grupo
+		}
 	}
 
 	logger.Info("Servidor iniciado exitosamente")
