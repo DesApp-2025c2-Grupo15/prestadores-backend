@@ -4,6 +4,7 @@ import (
 	"prestadores-api/internal/handler/afiliados"
 	"prestadores-api/internal/handler/autorizaciones"
 	"prestadores-api/internal/handler/login"
+	"prestadores-api/internal/handler/recetas"
 	"prestadores-api/internal/repository"
 	"prestadores-api/internal/service"
 	"time"
@@ -33,11 +34,16 @@ func main() {
 	autorizacionRepo := repository.NewAutorizacionRepository()
 	autorizacionService := service.NewAutorizacionService(autorizacionRepo, logger)
 
+	// Repository y Service de recetas
+	recetaRepo := repository.NewRecetaRepository()
+	recetaService := service.NewRecetaService(recetaRepo, logger)
+
 	// Handlers
 	loginHandler := login.NewLoginHandler(logger)
 	afiliadosHandler := afiliados.NewAfiliadoHandler(logger)
 	historiaHandler := afiliados.NewHistoriaClinicaHandler(logger)
 	autorizacionHandler := autorizaciones.NewAutorizacionHandler(autorizacionService, logger)
+	recetaHandler := recetas.NewRecetaHandler(recetaService, logger)
 
 	// Rutas /v1/prestadores
 	v1 := r.Group("/v1/prestadores")
@@ -68,7 +74,16 @@ func main() {
 				autorizacionesGroup.PATCH("/:id/estado", autorizacionHandler.CambiarEstadoAutorizacion)
 			}
 
-			// TODO: Recetas/Reintegros/Situaciones terapeuticas como sub grupo
+			recetasGroup := solicitudes.Group("/recetas")
+			{
+				recetasGroup.GET("", recetaHandler.GetRecetas)
+				recetasGroup.GET("/:id", recetaHandler.GetRecetaByID)
+				recetasGroup.POST("", recetaHandler.CreateReceta)
+				recetasGroup.PUT("/:id", recetaHandler.UpdateReceta)
+				recetasGroup.PATCH("/:id/estado", recetaHandler.CambiarEstadoReceta)
+			}
+
+			// TODO: Reintegros/Situaciones terapeuticas como sub grupo
 		}
 	}
 
