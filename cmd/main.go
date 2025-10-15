@@ -6,6 +6,7 @@ import (
 	"prestadores-api/internal/handler/login"
 	"prestadores-api/internal/handler/recetas"
 	"prestadores-api/internal/handler/reintegros"
+	"prestadores-api/internal/handler/situaciones"
 	"prestadores-api/internal/repository"
 	"prestadores-api/internal/service"
 	"time"
@@ -43,6 +44,10 @@ func main() {
 	reintegroRepo := repository.NewReintegroRepository()
 	reintegroService := service.NewReintegroService(reintegroRepo, logger)
 
+	// Repository y Service de Situaciones terapéuticas
+	situacionRepo := repository.NewSituacionRepository()
+	situacionService := service.NewSituacionService(situacionRepo, logger)
+
 	// Handlers
 	loginHandler := login.NewLoginHandler(logger)
 	afiliadosHandler := afiliados.NewAfiliadoHandler(logger)
@@ -50,6 +55,7 @@ func main() {
 	autorizacionHandler := autorizaciones.NewAutorizacionHandler(autorizacionService, logger)
 	recetaHandler := recetas.NewRecetaHandler(recetaService, logger)
 	reintegroHandler := reintegros.NewReintegroHandler(reintegroService, logger)
+	situacionHandler := situaciones.NewSituacionHandler(situacionService, logger)
 
 	// Rutas /v1/prestadores
 	v1 := r.Group("/v1/prestadores")
@@ -59,14 +65,26 @@ func main() {
 			c.JSON(200, gin.H{"message": "pong"})
 		})
 
-		// Afiliados
-		v1.GET("/afiliados", afiliadosHandler.GetAfiliados)
-		v1.GET("/afiliados/:id", afiliadosHandler.GetAfiliadoDetalle)
-		// Detalle de historia clínica (turnos + notas) del afiliado
-		v1.GET("/afiliados/:id/historia-clinica", historiaHandler.GetHistoriaClinica)
-
 		// Login
 		v1.POST("/login", loginHandler.Login)
+
+		// Afiliados
+		afiliadosGroup := v1.Group("/afiliados")
+		{
+			afiliadosGroup.GET("", afiliadosHandler.GetAfiliados)
+			afiliado := afiliadosGroup.Group("/:afiliadoId")
+			{
+				afiliado.GET("", afiliadosHandler.GetAfiliadoDetalle)
+				afiliado.GET("/historia-clinica", historiaHandler.GetHistoriaClinica)
+				// Situaciones terapéuticas
+
+				afiliado.GET("/situaciones", situacionHandler.GetSituaciones)                               // ?scope=grupo
+				afiliado.POST("/situaciones", situacionHandler.CreateSituacion)                             // alta
+				afiliado.PATCH("/situaciones/:situacionId", situacionHandler.PatchSituacion)                // ej. fechaFin
+				afiliado.PATCH("/situaciones/:situacionId/estado", situacionHandler.CambiarEstadoSituacion) // ALTA/BAJA/ACTIVA
+				afiliado.DELETE("/situaciones/:situacionId", situacionHandler.DeleteSituacion)              // baja física (opcional)
+			}
+		}
 
 		// Solicitudes
 		solicitudes := v1.Group("/solicitudes")
