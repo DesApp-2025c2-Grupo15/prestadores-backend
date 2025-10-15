@@ -17,13 +17,15 @@ const (
 
 // Situacion representa una situación terapéutica de un afiliado o miembro del grupo
 type Situacion struct {
-	ID          int             `json:"id"`
-	AfiliadoID  int             `json:"afiliadoId"`          // titular del grupo
-	MiembroID   *int            `json:"miembroId,omitempty"` // null si es el titular
-	Descripcion string          `json:"descripcion"`
-	FechaInicio string          `json:"fechaInicio"`        // ISO-8601 (yyyy-mm-dd) para simplificar mock
-	FechaFin    *string         `json:"fechaFin,omitempty"` // ISO-8601 o null
-	Estado      EstadoSituacion `json:"estado"`             // ACTIVA | BAJA
+	ID                 int             `json:"id"`
+	AfiliadoID         int             `json:"afiliadoId"`          // titular del grupo
+	MiembroID          *int            `json:"miembroId,omitempty"` // null si es el titular
+	Descripcion        string          `json:"descripcion"`
+	FechaInicio        string          `json:"fechaInicio"`        // ISO-8601 (yyyy-mm-dd) para simplificar mock
+	FechaFin           *string         `json:"fechaFin,omitempty"` // ISO-8601 o null
+	Estado             EstadoSituacion `json:"estado"`             // ACTIVA | BAJA | ALTA
+	FechaCreacion      time.Time       `json:"fechaCreacion"`
+	FechaActualizacion time.Time       `json:"fechaActualizacion"`
 }
 
 // IntegranteSituaciones agrupa situaciones por integrante (para vista de grupo familiar)
